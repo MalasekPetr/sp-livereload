@@ -31,7 +31,7 @@ You can focus on your code rather than when it is time to reload your browser.
 
 ## Used SharePoint Framework Version
 
-![version](https://img.shields.io/badge/SPFx-1.19.0-green.svg)
+![version](https://img.shields.io/badge/SPFx-1.21.1-green.svg)
 
 ## Applies to
 
@@ -52,6 +52,7 @@ None so far.
 
 | Version | Date             | Comments        |
 | ------- | ---------------- | --------------- |
+| 1.2     | July 1, 2025 | SPFx 1.21.1 support upgrade |
 | 1.1     | July 23, 2024 | Credits and Branding Information added |
 | 1.0     | July 11, 2024 | Initial release |
 
