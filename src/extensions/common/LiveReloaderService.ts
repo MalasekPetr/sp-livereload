@@ -2,7 +2,7 @@ import { ILiveReloaderSession, ILiveReloaderState } from "./ILiveReloaderState";
 
 const SESSION_STORAGE_KEY = "pnp-live-reloader";
 const SESSION_DEBUG_CONNECTED = "spfx-debug";
-const DEBUG_QUERY_STRING = "?debug=true&noredir=true&debugManifestsFile=https://localhost:4321/temp/manifests.js";
+const DEBUG_QUERY_STRING = "?debug=true&noredir=true&debugManifestsFile=https://localhost:4321/temp/build/manifests.js";
 
 export interface ILiveReloaderService {
     available: boolean;

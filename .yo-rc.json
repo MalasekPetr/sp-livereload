@@ -2,12 +2,12 @@
   "@microsoft/generator-sharepoint": {
     "plusBeta": false,
     "isCreatingSolution": true,
-    "nodeVersion": "18.19.0",
+    "nodeVersion": ">=22.14.0 < 23.0.0",
     "sdksVersions": {
       "@microsoft/microsoft-graph-client": "3.0.2",
-      "@microsoft/teams-js": "2.12.0"
+      "@microsoft/teams-js": "2.24.0"
     },
-    "version": "1.19.0",
+    "version": "1.21.1",
     "libraryName": "PnPSPFxLiveReloader",
     "libraryId": "8efb81af-7fba-40a7-bd48-48a12bdb4c54",
     "environment": "spo",

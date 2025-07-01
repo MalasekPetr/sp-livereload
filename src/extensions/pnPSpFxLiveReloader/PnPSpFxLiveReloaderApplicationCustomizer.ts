@@ -27,7 +27,7 @@ export interface IPnPSPFxLiveReloaderApplicationCustomizerProperties {
   Top: string;
 }
 
-const LIVE_RELOAD_CONNECTION = "//localhost:4321/temp/manifests.js";
+const LIVE_RELOAD_CONNECTION = "//localhost:4321/temp/build/manifests.js";
 
 /** A Custom Action which can be run during execution of a Client Side Application */
 export default class PnPSPFxLiveReloaderApplicationCustomizer
