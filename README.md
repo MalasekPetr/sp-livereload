@@ -31,7 +31,7 @@ You can focus on your code rather than when it is time to reload your browser.
 
 ## Used SharePoint Framework Version
 
-![version](https://img.shields.io/badge/SPFx-1.19.0-green.svg)
+![version](https://img.shields.io/badge/SPFx-1.22.1-green.svg)
 
 ## Applies to
 
@@ -52,6 +52,7 @@ None so far.
 
 | Version | Date             | Comments        |
 | ------- | ---------------- | --------------- |
+| 1.2     | January 28, 2026 | SPFx 1.22 Heft migration, placement toggle, WebSocket fixes |
 | 1.1     | July 23, 2024 | Credits and Branding Information added |
 | 1.0     | July 11, 2024 | Initial release |
 
@@ -77,7 +78,7 @@ For details look at the [CHANGELOG](CHANGELOG.md)
 - Ensure that you are at the solution folder
 - in the command-line run:
   - **npm install**
-  - **gulp serve**
+  - **npm run serve**
 
 ## Features
 
