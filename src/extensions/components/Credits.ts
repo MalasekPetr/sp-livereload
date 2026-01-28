@@ -58,9 +58,7 @@ export class Credits {
 
         const maintainers = pkg.maintainers;
 
-        for (const index in maintainers) {
-
-            const curMaintainer = pkg.maintainers[index];
+        for (const curMaintainer of maintainers) {
 
             const menuItem = document.createElement('li');
             menuItem.classList.add('pnp-lr-author');

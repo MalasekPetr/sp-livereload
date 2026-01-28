@@ -11,12 +11,12 @@ export interface IToggleProps {
 
 export class HooToggle {
 
-  _ID: string;
-  _component: HTMLElement;
-  _inputToggle: HTMLInputElement;
-  _inputLabel: HTMLLabelElement;
-  _inputStateActive: HTMLOutputElement;
-  _inputStateInactive: HTMLOutputElement;
+  _ID!: string;
+  _component!: HTMLElement;
+  _inputToggle!: HTMLInputElement;
+  _inputLabel!: HTMLLabelElement;
+  _inputStateActive!: HTMLOutputElement;
+  _inputStateInactive!: HTMLOutputElement;
 
   constructor(labels: IHooToggle, appendTo: HTMLElement, props?: IToggleProps) {
 

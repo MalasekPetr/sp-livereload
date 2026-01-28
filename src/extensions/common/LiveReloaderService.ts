@@ -2,12 +2,17 @@ import { ILiveReloaderSession, ILiveReloaderState } from "./ILiveReloaderState";
 
 const SESSION_STORAGE_KEY = "pnp-live-reloader";
 const SESSION_DEBUG_CONNECTED = "spfx-debug";
-const DEBUG_QUERY_STRING = "?debug=true&noredir=true&debugManifestsFile=https://localhost:4321/temp/manifests.js";
+const PLACEMENT_STORAGE_KEY = "pnp-live-reloader-placement";
+// SPFx v1.21+ uses /temp/build/manifests.js
+const DEBUG_QUERY_STRING = "?debug=true&noredir=true&debugManifestsFile=https://localhost:4321/temp/build/manifests.js";
+
+export type PlacementPosition = 'top' | 'bottom';
 
 export interface ILiveReloaderService {
     available: boolean;
     connected: boolean;
     debugConnected: boolean;
+    placement: PlacementPosition;
     state: { available: boolean; connected: boolean; debugConnected: boolean }
 }
 
@@ -16,11 +21,13 @@ export class LiveReloaderService implements ILiveReloaderService {
     private _available?: boolean;
     private _connected?: boolean;
     private _debugConnected: boolean;
+    private _placement: PlacementPosition;
 
     constructor() {
 
         const storageItem = sessionStorage.getItem(SESSION_STORAGE_KEY);
         const debugMode = sessionStorage.getItem(SESSION_DEBUG_CONNECTED);
+        const placementItem = localStorage.getItem(PLACEMENT_STORAGE_KEY);
 
         if (storageItem === null) {
             console.debug(' No storage entity found ');
@@ -34,6 +41,13 @@ export class LiveReloaderService implements ILiveReloaderService {
             this._debugConnected = true;
         } else {
             this._debugConnected = false;
+        }
+
+        // Initialize placement from localStorage, default to 'bottom'
+        if (placementItem === 'top' || placementItem === 'bottom') {
+            this._placement = placementItem;
+        } else {
+            this._placement = 'bottom';
         }
 
     }
@@ -99,6 +113,17 @@ export class LiveReloaderService implements ILiveReloaderService {
 
     get debugConnected(): boolean {
         return this._debugConnected;
+    }
+
+    get placement(): PlacementPosition {
+        return this._placement;
+    }
+
+    set placement(v: PlacementPosition) {
+        this._placement = v;
+        localStorage.setItem(PLACEMENT_STORAGE_KEY, v);
+        // Reload the page to apply the new placement
+        window.location.reload();
     }
 
     get state() {

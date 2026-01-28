@@ -63,8 +63,8 @@ export class Dialog extends HTMLDialogElement {
                 this._firstFocusableElement.focus();
             }
         }
-    
-    };
+
+    }
 
     appendContent(content: NodeListOf<ChildNode>) {
 

@@ -1,15 +1,22 @@
 {
   "name": "pnp-spfx-live-reloader",
-  "version": "1.1.0",
+  "version": "1.3.0",
   "private": true,
   "engines": {
-    "node": ">=18.17.1 <19.0.0"
+    "node": ">=18.17.1"
   },
   "main": "lib/index.js",
   "scripts": {
-    "build": "gulp bundle",
-    "clean": "gulp clean",
-    "test": "gulp test",
+    "build": "heft build --clean",
+    "build:production": "heft test --clean --production && heft package-solution --production",
+    "build:ship": "heft build --clean --production && heft package-solution --production",
+    "clean": "heft clean",
+    "start": "heft start --clean",
+    "serve": "heft start --clean",
+    "test": "heft test",
+    "package": "heft package-solution",
+    "package:ship": "heft package-solution --production",
+    "eject:webpack": "heft eject-webpack",
     "postversion": "npx conventional-changelog-cli -i CHANGELOG.md -s -a -p conventionalcommits -t htwoo-core-v -u -v"
   },
   "homepage": "https://github.com/pnp/sp-livereload",
@@ -25,25 +32,27 @@
   ],
   "contributors": [],
   "dependencies": {
-    "@microsoft/decorators": "1.19.0",
-    "@microsoft/sp-application-base": "1.19.0",
-    "@microsoft/sp-core-library": "1.19.0",
-    "@microsoft/sp-dialog": "1.19.0",
+    "@microsoft/decorators": "1.22.1",
+    "@microsoft/sp-application-base": "1.22.1",
+    "@microsoft/sp-component-base": "1.22.1",
+    "@microsoft/sp-core-library": "1.22.1",
+    "@microsoft/sp-dialog": "1.22.1",
     "@n8d/htwoo-core": "^2.5.2",
     "conventional-changelog": "^6.0.0",
     "tslib": "2.3.1"
   },
   "devDependencies": {
-    "@microsoft/eslint-config-spfx": "1.20.1",
-    "@microsoft/eslint-plugin-spfx": "1.20.1",
-    "@microsoft/rush-stack-compiler-4.7": "0.1.0",
-    "@microsoft/sp-build-web": "1.20.1",
-    "@microsoft/sp-module-interfaces": "1.20.1",
-    "@rushstack/eslint-config": "2.5.1",
+    "@microsoft/eslint-config-spfx": "1.22.1",
+    "@microsoft/eslint-plugin-spfx": "1.22.1",
+    "@microsoft/sp-module-interfaces": "1.22.1",
+    "@microsoft/spfx-heft-plugins": "1.22.1",
+    "@microsoft/spfx-web-build-rig": "1.22.1",
+    "@rushstack/eslint-config": "4.5.2",
+    "@rushstack/heft": "1.1.2",
+    "@types/heft-jest": "1.0.2",
     "@types/webpack-env": "~1.15.2",
-    "ajv": "^6.12.5",
-    "eslint": "8.7.0",
-    "gulp": "4.0.2",
-    "typescript": "4.7.4"
+    "@typescript-eslint/parser": "8.26.1",
+    "eslint": "8.57.0",
+    "typescript": "5.8.3"
   }
 }
