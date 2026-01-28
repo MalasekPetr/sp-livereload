@@ -1,3 +1,15 @@
+## 1.2.0 (2026-01-28)
+
+### Features
+
+* **Build:** Upgraded from SPFx 1.19.0 (Gulp) to SPFx 1.22.1 (Heft) toolchain
+* **Build:** Upgraded TypeScript from 4.7 to 5.8
+* **UI:** Application customizer can be dynamically placed at Header (top) or Footer (bottom) with localStorage persistence
+
+### Bug Fixes
+
+* **Compatibility:** debugManifestUrl handling now supports SPFx 1.0 - 1.22 with fallback logic for backward compatibility
+
 ## 1.1.0 (2024-07-23)
 
 ### Features
