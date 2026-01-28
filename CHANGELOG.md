@@ -9,6 +9,9 @@
 ### Bug Fixes
 
 * **Compatibility:** debugManifestUrl handling now supports SPFx 1.0 - 1.22 with fallback logic for backward compatibility
+* **Compatibility:** WebSocket connection updated to use webpack-dev-server (`wss://localhost:4321/ws`) with hash-based change detection
+* **Compatibility:** Fixed connected/disconnected toggle state management to properly respect user preference
+* **Build:** Fixed TypeScript 5.8 strict mode warnings (TS2564 - definite assignment assertions)
 
 ## 1.1.0 (2024-07-23)
 

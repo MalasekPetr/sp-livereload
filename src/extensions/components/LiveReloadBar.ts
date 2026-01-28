@@ -14,28 +14,35 @@ import { QuickActions } from './QuickActions';
 export default class LiveReloadBar {
 
     _LIVE_RELOAD_IDENTIFIER = "PnP-Live-Reload";
-    _LIVE_RELOADER_SOCKET = "https://localhost:35729/livereload.js?snipver=1";
-    _LIVE_RELOADER_SOCKET_ALERT = "https://localhost:35729/changed";
+    // SPFx 1.21+ uses webpack-dev-server on port 4321
+    _LIVE_RELOADER_SOCKET = "wss://localhost:4321/ws";
+    // Legacy LiveReload server (SPFx < 1.21) - kept for reference
+    _LIVE_RELOADER_SOCKET_LEGACY = "wss://localhost:35729/livereload.js?snipver=1";
 
-    _mainfest: IClientSideComponentManifest;
-    _connection: WebSocket;
+    _mainfest!: IClientSideComponentManifest;
+    _connection!: WebSocket;
+    // Track webpack build hash to detect actual changes
+    _currentHash: string | undefined = undefined;
+    _isFirstHash = true;
 
-    _parentDom: HTMLElement;
+    _parentDom!: HTMLElement;
     _domContainer = new DocumentFragment();
-    _stateAvailable: HTMLOutputElement;
-    _stateConnected: HTMLOutputElement;
-    _credits: Credits;
-    _branding: Branding;
-    _actionBar: HTMLElement;
-    _debugConnect: HooIconButton;
-    _debugDisconnect: HooIconButton;
-    _toggle: HooToggle;
-    _placementToggle: HooToggle;
-    _availability: AvailabilityState;
+    _stateAvailable!: HTMLOutputElement;
+    _stateConnected!: HTMLOutputElement;
+    _credits!: Credits;
+    _branding!: Branding;
+    _actionBar!: HTMLElement;
+    _debugConnect!: HooIconButton;
+    _debugDisconnect!: HooIconButton;
+    _toggle!: HooToggle;
+    _placementToggle!: HooToggle;
+    _availability!: AvailabilityState;
 
     changeConnection = (event: Event): void => {
-        // lrs.connected = !lrs.connected
-        this.setState();
+        // Toggle the connected state
+        lrs.connected = !lrs.connected;
+        // Sync UI with new state
+        this.syncUI();
         this.connectLiveReload();
     }
 
@@ -62,14 +69,43 @@ export default class LiveReloadBar {
                 this._connection.addEventListener('message', (event) => {
                     if (event.data) {
                         const msgCommand = JSON.parse(event.data) as ILiveReloaderMessage;
-                        if (lrs.state.connected && msgCommand.command && msgCommand.command === 'reload') {
+
+                        // Legacy LiveReload format (SPFx < 1.21)
+                        // Only reload if connected
+                        if (lrs.state.connected && msgCommand.command === 'reload') {
                             window.location.reload();
+                        }
+
+                        // Webpack-dev-server format (SPFx 1.21+)
+                        // Always track hash to know current state
+                        if (msgCommand.type === 'hash' && typeof msgCommand.data === 'string') {
+                            const newHash = msgCommand.data;
+                            LogDebug('Hash message received. Connected state:', lrs.state.connected);
+
+                            if (this._isFirstHash) {
+                                // Store initial hash, don't reload
+                                this._currentHash = newHash;
+                                this._isFirstHash = false;
+                                LogDebug('Initial hash stored:', this._currentHash);
+                            } else if (this._currentHash !== newHash) {
+                                // Hash changed - update stored hash
+                                LogDebug('Hash changed from', this._currentHash, 'to', newHash, '| Connected:', lrs.state.connected);
+                                this._currentHash = newHash;
+
+                                // Only reload if connected toggle is ON
+                                if (lrs.state.connected) {
+                                    LogDebug('Reloading page...');
+                                    window.location.reload();
+                                } else {
+                                    LogDebug('Hash changed but not connected - skipping reload');
+                                }
+                            }
                         }
                         LogDebug('MESSAGE COMMAND ::::', msgCommand);
                     }
                     LogDebug('Web Socket Event ::: Message', event)
                 })
-            } catch (error) {
+            } catch {
 
                 LogDebug('Failed to connect')
 
@@ -176,7 +212,7 @@ export default class LiveReloadBar {
         })
 
 
-        this.setState();
+        this.syncUI();
 
         this._parentDom.append(this._domContainer);
 
@@ -193,18 +229,15 @@ export default class LiveReloadBar {
 
     }
 
-    setState() {
-
+    syncUI() {
+        // Sync UI elements with current state (don't modify state here)
         if (lrs.available !== undefined) {
             this._toggle.enabled = lrs.available;
             this._availability.available = lrs.available;
         }
 
-        if (lrs.connected !== undefined) {
-            lrs.connected = !lrs.connected
-            this._toggle.checked = lrs.connected;
-        }
-
+        // Sync toggle with current connected state
+        this._toggle.checked = lrs.connected;
     }
 
 }
