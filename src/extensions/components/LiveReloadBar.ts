@@ -30,12 +30,19 @@ export default class LiveReloadBar {
     _debugConnect: HooIconButton;
     _debugDisconnect: HooIconButton;
     _toggle: HooToggle;
+    _placementToggle: HooToggle;
     _availability: AvailabilityState;
 
     changeConnection = (event: Event): void => {
         // lrs.connected = !lrs.connected
         this.setState();
         this.connectLiveReload();
+    }
+
+    changePlacement = (event: Event): void => {
+        // Toggle between 'top' and 'bottom' placement
+        lrs.placement = lrs.placement === 'top' ? 'bottom' : 'top';
+        // Note: lrs.placement setter triggers window.location.reload()
     }
 
     private connectLiveReload() {
@@ -135,6 +142,12 @@ export default class LiveReloadBar {
         this._toggle = new HooToggle({ labelInactive: "Disconnected", labelActive: "Connected" }, section, { tabIndex: -1 });
         this._toggle.addEventListener('click', this.changeConnection);
         this._toggle.enabled = lrs.connected;
+
+        this._placementToggle = new HooToggle({ labelInactive: "Footer", labelActive: "Header" }, section, { tabIndex: -1 });
+        this._placementToggle.addEventListener('click', this.changePlacement);
+        this._placementToggle.checked = lrs.placement === 'top';
+        // Set hover tooltip to show opposite action
+        this._placementToggle._inputToggle.title = lrs.placement === 'top' ? 'Toggle to Footer' : 'Toggle to Header';
 
 
         const lrActionCredit = document.createElement('div');

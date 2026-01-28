@@ -27,17 +27,19 @@ export interface IPnPSPFxLiveReloaderApplicationCustomizerProperties {
   Top: string;
 }
 
-const LIVE_RELOAD_CONNECTION = "//localhost:4321/temp/manifests.js";
+// SPFx v1.21+ uses /temp/build/manifests.js, earlier versions use /temp/manifests.js
+const LIVE_RELOAD_CONNECTION_V121 = "//localhost:4321/temp/build/manifests.js";
+const LIVE_RELOAD_CONNECTION_LEGACY = "//localhost:4321/temp/manifests.js";
 
 /** A Custom Action which can be run during execution of a Client Side Application */
 export default class PnPSPFxLiveReloaderApplicationCustomizer
   extends BaseApplicationCustomizer<IPnPSPFxLiveReloaderApplicationCustomizerProperties> {
 
-  _themeProvider: ThemeProvider;
+  _themeProvider!: ThemeProvider;
   _themeVariant: IReadonlyTheme | undefined;
-  _styles: CSSStyleDeclaration;
-  _bottomPlaceholder: PlaceholderContent | undefined;
-  _liveReloaderBar: LiveReloadBar;
+  _styles!: CSSStyleDeclaration;
+  _placeholder: PlaceholderContent | undefined;
+  _liveReloaderBar!: LiveReloadBar;
 
   private async checkLiveReloadStatus() {
 
@@ -87,17 +89,22 @@ export default class PnPSPFxLiveReloaderApplicationCustomizer
 
     // LogDebug('Try to fetch live reload connection');
 
+    // Try SPFx v1.21+ URL first, then fall back to legacy URL for older versions
     try {
-
-      const liveReloadConnection = await fetch(LIVE_RELOAD_CONNECTION) as Response;
-
-      // LogDebug('---- 🚀 LIVE CONNECTION::::', liveReloadConnection, liveReloadConnection.status, liveReloadConnection.statusText);
-
-      return liveReloadConnection;
-
+      const liveReloadConnection = await fetch(LIVE_RELOAD_CONNECTION_V121) as Response;
+      if (liveReloadConnection.ok) {
+        return liveReloadConnection;
+      }
     } catch {
+      LogDebug('SPFx v1.21+ connection not available, trying legacy URL...');
+    }
 
-      LogDebug(' Connection not available ');
+    // Fall back to legacy URL (SPFx < v1.21)
+    try {
+      const liveReloadConnection = await fetch(LIVE_RELOAD_CONNECTION_LEGACY) as Response;
+      return liveReloadConnection;
+    } catch {
+      LogDebug('Connection not available');
       return null;
     }
 
@@ -105,40 +112,36 @@ export default class PnPSPFxLiveReloaderApplicationCustomizer
 
   private _renderStatusBar() {
 
-    if (!this._bottomPlaceholder) {
+    if (!this._placeholder) {
 
-      this._bottomPlaceholder = this.context.placeholderProvider.tryCreateContent(
-        PlaceholderName.Bottom,
+      // Use placement from localStorage (via lrs.placement), default is 'bottom'
+      const placeholderName = lrs.placement === 'top' ? PlaceholderName.Top : PlaceholderName.Bottom;
+
+      this._placeholder = this.context.placeholderProvider.tryCreateContent(
+        placeholderName,
         { onDispose: this._onDispose }
       );
 
       // The extension should not assume that the expected placeholder is available.
-      if (!this._bottomPlaceholder) {
+      if (!this._placeholder) {
 
-        LogDebug("The expected placeholder (Bottom) was not found.");
+        LogDebug(`The expected placeholder (${lrs.placement}) was not found.`);
 
         return;
 
       }
 
-      if (this.properties) {
-        let bottomString: string = this.properties.Bottom;
-        if (!bottomString) {
-          bottomString = "(Bottom property was not defined.)";
-        }
+      if (this._placeholder.domElement) {
 
-        if (this._bottomPlaceholder.domElement) {
+        this._placeholder.domElement.setAttribute('style', this._styles.cssText);
+        this._placeholder.domElement.classList.add(styles.pnpLiveReloader);
 
-          this._bottomPlaceholder.domElement.setAttribute('style', this._styles.cssText);
-          this._bottomPlaceholder.domElement.classList.add(styles.pnpLiveReloader);
+        this._liveReloaderBar = new LiveReloadBar(this._placeholder.domElement, this.context.manifest);
 
-          this._liveReloaderBar = new LiveReloadBar(this._bottomPlaceholder.domElement, this.context.manifest);
+        this._liveReloaderBar.setState();
 
-          this._liveReloaderBar.setState();
+        this._placeholder.domElement.classList.add(styles.pnpLiveReloader);
 
-          this._bottomPlaceholder.domElement.classList.add(styles.pnpLiveReloader);
-
-        }
       }
     }
   }
@@ -177,7 +180,7 @@ export default class PnPSPFxLiveReloaderApplicationCustomizer
     } catch (e) {
 
       LogError('Debug Log', e);
-      throw new Error(e.message);
+      throw new Error(e instanceof Error ? e.message : String(e));
 
     }
 
@@ -198,8 +201,8 @@ export default class PnPSPFxLiveReloaderApplicationCustomizer
       this.setCSSVariables(args.theme.semanticColors);
       this.setCSSVariables(args.theme.palette);
 
-      if(this._bottomPlaceholder){
-        this._bottomPlaceholder.domElement.setAttribute('style', this._styles.cssText);
+      if(this._placeholder){
+        this._placeholder.domElement.setAttribute('style', this._styles.cssText);
       }
 
 
