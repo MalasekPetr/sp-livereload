@@ -1,0 +1,1 @@
+{"version":3,"file":"ILiveReloaderMessage.js","sourceRoot":"","sources":["../../../src/extensions/common/ILiveReloaderMessage.ts"],"names":[],"mappings":"","sourcesContent":["export interface ILiveReloaderMessage{\n    command: \"reload\" | \"alert\" | undefined;\n    liveCSS: boolean;\n    liveImg: boolean;\n    path: string;\n    reloadMissingCSS: boolean;\n}"]}
