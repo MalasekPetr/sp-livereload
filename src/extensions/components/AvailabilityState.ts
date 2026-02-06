@@ -2,10 +2,10 @@ import { ILiveReloaderState } from "../common/ILiveReloaderState";
 
 export class AvailabilityState {
 
-  _state: ILiveReloaderState;
-  _container: HTMLDivElement;
-  _indicator: HTMLElement;
-  _label: HTMLLabelElement;
+  _state!: ILiveReloaderState;
+  _container!: HTMLDivElement;
+  _indicator!: HTMLElement;
+  _label!: HTMLLabelElement;
 
   constructor(state: ILiveReloaderState, parentDom: HTMLElement) {
 

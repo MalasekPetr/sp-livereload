@@ -21,7 +21,7 @@ interface Icon {
 
 class IconService {
     // eslint-disable-next-line
-    svgIcons: Document;
+    svgIcons!: Document;
     icons: Icon[] = [];
     // eslint-disable-next-line
     allIconNames: string[] = [];

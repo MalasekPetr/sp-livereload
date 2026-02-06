@@ -4,12 +4,12 @@ const DLG_ATTR_STATE = 'open';
 
 export class Dialog extends HTMLDialogElement {
 
-    _header: HTMLElement;
-    _content: HTMLElement;
-    _closeButton: HooIconButton;
+    _header!: HTMLElement;
+    _content!: HTMLElement;
+    _closeButton!: HooIconButton;
 
-    _firstFocusableElement: HTMLElement;
-    _lastFocusableElement: HTMLElement;
+    _firstFocusableElement!: HTMLElement;
+    _lastFocusableElement!: HTMLElement;
 
     constructor(title: string, id: string) {
 

@@ -6,9 +6,9 @@ const filterFonts = ['Segoe UI', 'Leelawadee', 'Fluent', 'Fabric', 'Shell'];
 
 export class Branding {
 
-  private _dialog: Dialog;
-  private _dialogContent: HTMLElement;
-  private _themeInfo: HTMLElement;
+  private _dialog!: Dialog;
+  private _dialogContent!: HTMLElement;
+  private _themeInfo!: HTMLElement;
 
   private _registeredCustomFonts: Array<FontFace> = [];
 
