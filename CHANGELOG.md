@@ -1,3 +1,23 @@
+## 1.3.0 (2026-02-06)
+
+### Features
+
+* **HMR Control:** Intelligent SPFx version detection enables modern HMR interception for SPFx 1.22+
+* **HMR Control:** Pause/resume toggle allows developers to control when live reload updates are applied
+* **HMR Control:** Pending updates badge displays count of blocked HMR updates while paused
+* **HMR Control:** Apply button enables manual application of accumulated changes without auto-reload
+* **HMR Control:** Session storage persistence maintains pause state across page navigations
+* **HMR Control:** `webpackHotUpdate*` interception provides fine-grained control over webpack HMR lifecycle
+* **Build:** Upgraded SPFx dependencies from 1.22.1 to 1.22.2
+* **Build:** Updated htwoo-core to 2.7.1, conventional-changelog to 7.1.1, tslib to 2.8.1
+* **Documentation:** Added HMR flow diagram and version detection comparison (Dieter Rams design aesthetic)
+
+### Technical Details
+
+* **Modern Mode (SPFx 1.22+):** Leverages existing webpack-dev-server HMR infrastructure with interceptor
+* **Legacy Mode (SPFx ≤ 1.21):** Maintains WebSocket-based reload approach for backward compatibility
+* **HMR Strategy:** Passes empty `{}` modules to webpack when paused to block updates without disrupting HMR connection
+
 ## 1.2.0 (2026-01-28)
 
 ### Features
