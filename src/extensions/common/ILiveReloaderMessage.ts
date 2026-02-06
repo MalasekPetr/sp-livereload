@@ -6,6 +6,6 @@ export interface ILiveReloaderMessage{
     path?: string;
     reloadMissingCSS?: boolean;
     // Webpack-dev-server format (SPFx 1.21+)
-    type?: "hot" | "liveReload" | "hash" | "ok" | "still-ok" | "reconnect";
+    type?: "hash" | "hot" | "ok" | "invalid" | "still-ok" | "errors" | "warnings" | "liveReload" | "reconnect";
     data?: string | number;
 }

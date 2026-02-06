@@ -13,7 +13,11 @@ export interface ILiveReloaderService {
     connected: boolean;
     debugConnected: boolean;
     placement: PlacementPosition;
-    state: { available: boolean; connected: boolean; debugConnected: boolean }
+    // v1.3 - HMR Interceptor properties
+    paused: boolean;
+    pendingCount: number;
+    modernMode: boolean;
+    state: ILiveReloaderState;
 }
 
 export class LiveReloaderService implements ILiveReloaderService {
@@ -22,6 +26,10 @@ export class LiveReloaderService implements ILiveReloaderService {
     private _connected?: boolean;
     private _debugConnected: boolean;
     private _placement: PlacementPosition;
+    // v1.3 - HMR Interceptor properties
+    private _paused = false;
+    private _pendingCount = 0;
+    private _modernMode = false;
 
     constructor() {
 
@@ -32,9 +40,15 @@ export class LiveReloaderService implements ILiveReloaderService {
         if (storageItem === null) {
             console.debug(' No storage entity found ');
         } else {
-            const sessionSettings = JSON.parse(storageItem) as ILiveReloaderState;
-            sessionSettings.available = false;
-            this.state = sessionSettings;
+            const sessionSettings = JSON.parse(storageItem) as ILiveReloaderSession;
+            // Restore paused state from session
+            if (sessionSettings.paused !== undefined) {
+                this._paused = sessionSettings.paused;
+            }
+            // Restore connected state
+            if (sessionSettings.connected !== undefined) {
+                this._connected = sessionSettings.connected;
+            }
         }
 
         if (debugMode !== null) {
@@ -55,13 +69,13 @@ export class LiveReloaderService implements ILiveReloaderService {
     private _updateSessionState(state: ILiveReloaderState): void {
 
         const sessionState = {
-
-            connected: state.connected
-
+            connected: state.connected,
+            paused: state.paused
         } as ILiveReloaderSession;
 
         sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(sessionState));
         this._connected = state.connected;
+        this._paused = state.paused;
 
     }
 
@@ -126,32 +140,70 @@ export class LiveReloaderService implements ILiveReloaderService {
         window.location.reload();
     }
 
-    get state() {
+    // v1.3 - HMR Interceptor properties
+
+    get paused(): boolean {
+        return this._paused;
+    }
+
+    set paused(v: boolean) {
+        this._paused = v;
+        const state = this.state;
+        state.paused = v;
+        this._updateSessionState(state);
+    }
+
+    get pendingCount(): number {
+        return this._pendingCount;
+    }
+
+    set pendingCount(v: number) {
+        this._pendingCount = v;
+    }
+
+    get modernMode(): boolean {
+        return this._modernMode;
+    }
+
+    set modernMode(v: boolean) {
+        this._modernMode = v;
+    }
+
+    get state(): ILiveReloaderState {
         return {
             available: this.available,
             connected: this.connected,
-            debugConnected: this.debugConnected
+            debugConnected: this.debugConnected,
+            paused: this.paused,
+            pendingCount: this.pendingCount,
+            modernMode: this.modernMode
         }
     }
 
     set state(state: ILiveReloaderState) {
 
-        if (state.available) {
-
+        if (state.available !== undefined) {
             this._available = state.available;
-
         }
 
-        if (state.connected) {
-
+        if (state.connected !== undefined) {
             this._connected = state.connected;
-
         }
 
-        if (state.debugConnected) {
-
+        if (state.debugConnected !== undefined) {
             this._debugConnected = state.debugConnected;
+        }
 
+        if (state.paused !== undefined) {
+            this._paused = state.paused;
+        }
+
+        if (state.pendingCount !== undefined) {
+            this._pendingCount = state.pendingCount;
+        }
+
+        if (state.modernMode !== undefined) {
+            this._modernMode = state.modernMode;
         }
 
         this._updateSessionState(state);
